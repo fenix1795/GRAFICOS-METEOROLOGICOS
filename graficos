@@ -1,0 +1,121 @@
+#Ejemplo de rosa de vientos de la EM16 del mes de enero de 2013 - datos reales del CIAD
+#Importamos las librerias para importar datos y graficar
+
+import pandas as pd
+import numpy as np
+import numpy as np
+from matplotlib import pyplot as plt
+
+
+#copiamos la ruta excel y le damos una variable df
+url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2ZILx3ZfkUHFUlakU-UySa3yi3OUW6tCMxvUCOKJVo8RORC3KmGUUR5I2sSs8Xw/pub?output=xlsx"
+df = pd.read_excel(url, parse_dates=["tiempo"])
+df = df.set_index("tiempo")
+df.head(4)
+
+#graficamos la velocidad vs direccion de viento
+
+
+df["velocidad_x"] = df["velocidad"] * np.sin(df["direccion"] * np.pi / 180.0)
+df["velocidad_y"] = df["velocidad"] * np.cos(df["direccion"] * np.pi / 180.0)
+
+fig, ax = plt.subplots(figsize=(8, 8), dpi=80)
+x0, x1 = ax.get_xlim()
+y0, y1 = ax.get_ylim()
+ax.set_aspect("equal")
+df.plot(kind="scatter", x="velocidad_x", y="velocidad_y", alpha=0.05, ax=ax)
+Vw = 80
+ax.set_xlim([-Vw, Vw])
+ax.set_ylim([-Vw, Vw]);
+
+plt.title('DISPERCIÓN DE VELOCIDAD EM16', fontsize=12)
+
+#INSTALAMOS EL PACKETE WINDROSE PARA ROSA DE VIENTOS
+
+!pip install windrose
+from windrose import WindroseAxes
+
+#Instalamos las librerias para la rosa de vientos
+import matplotlib.cm as cm
+
+from windrose import WindroseAxes
+
+ax = WindroseAxes.from_ax()
+ax.bar(
+    df.direccion.values, df.velocidad.values,normed=True,opening=0.5,bins=8
+)
+
+#tener encuenta la "bins" es la cantidad de datos que representa el grafico
+#edgecolor="white"
+#ax.bar(
+##    df.direccion.values, df.velocidad.values, bins=np.arange(0.01, 8, 1), cmap=cm.hot, lw=3
+#)
+ax.set_legend();
+#tamaño,color, y tipo de letra de titulo del grafico
+plt.title("Rosa de Viento del mes de enero 2013 de la EMA16", 
+          fontdict={'family': 'Arial', 
+                  'color' : 'black',
+                    'weight': 'bold',
+                   'size': 18})
+# titulo de leyenda
+legend = plt.legend( title = "Velocidad (m/s)",loc='best',bbox_to_anchor=(0.9,0.2),
+                    title_fontsize = 12)
+# marco de leyenda
+
+legend._legend_box.sep = 15
+plt.rc("legend",fontsize='large')
+
+#La Rosa de Vientos con relleno y mapa de color definido
+ax = WindroseAxes.from_ax()
+ax.contourf(df.direccion, df.velocidad,bins=8)
+ax.set_legend()
+#tamaño,color, y tipo de letra de titulo del grafico
+plt.title("Direccion de la Rosa de Viento EMA16", 
+          fontdict={'family': 'Arial', 
+                  'color' : 'black',
+                    'weight': 'bold',
+                   'size': 18})
+# titulo de leyenda
+legend = plt.legend( title = "Dirección (o)",loc='best',bbox_to_anchor=(0.9,0.2),
+                    title_fontsize = 12)
+# marco de leyenda
+
+legend._legend_box.sep = 15
+plt.rc("legend",fontsize='large')
+
+#Otra forma de graficar rosa de vientos
+ax = WindroseAxes.from_ax()
+ax.box(df.direccion, df.velocidad ,bins=8)
+ax.set_legend()
+#tamaño,color, y tipo de letra de titulo del grafico
+plt.title("Direccion de la Rosa de Viento EMA16", 
+          fontdict={'family': 'Arial', 
+                  'color' : 'black',
+                    'weight': 'bold',
+                   'size': 18})
+# titulo de leyenda
+legend = plt.legend( title = "Dirección (o)",loc='best',bbox_to_anchor=(0.9,0.2),
+                    title_fontsize = 12)
+# marco de leyenda
+
+legend._legend_box.sep = 15
+plt.rc("legend",fontsize='large')
+
+#La Rosa de Vientos en lineas y mapa de color definido
+from windrose import plot_windrose
+plot_windrose(df.direccion, df.velocidad , kind="contour",bins=8);
+#ax.contour(df.direccion, df.velocidad, bins=np.arange(0, 8, 1), cmap=cm.hot, lw=3)
+ax.set_legend()
+#tamaño,color, y tipo de letra de titulo del grafico
+plt.title("Direccion de la Rosa de Viento EMA16", 
+          fontdict={'family': 'Arial', 
+                  'color' : 'black',
+                    'weight': 'bold',
+                   'size': 18})
+# titulo de leyenda
+legend = plt.legend( title = "Dirección (o)",loc='best',bbox_to_anchor=(0.9,0.2),
+                    title_fontsize = 12)
+# marco de leyenda
+
+legend._legend_box.sep = 15
+plt.rc("legend",fontsize='large')
